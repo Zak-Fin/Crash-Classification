@@ -13,12 +13,12 @@ file_dict = dict()
 # List of different activity names
 activities = set()
 file_names = os.listdir('cycle-crash-dataset/combined')
-bar_cycle = []
-gyro_cycle = []
-accel_cycle = []
-bar_crash = []
-gyro_crash = []
-accel_crash = []
+bar_cycle = dict()
+gyro_cycle = dict()
+accel_cycle = dict()
+bar_crash = dict()
+gyro_crash = dict()
+accel_crash = dict()
 
 for file_name in file_names:
     if '.txt' in file_name:
@@ -28,27 +28,30 @@ for file_name in file_names:
         sessions.add((identifier, activity))
         # Load the data from the file into a pandas dataframe
         data = pd.read_csv(os.path.join('cycle-crash-dataset/combined', file_name), header=None, sep=' ')
-
-        # Preprocess the data (e.g., remove NaNs, apply filters, etc.)
-        # ...
         accel = data.drop_duplicates(data.columns[0], keep='first').values
-        # Spine-line interpolataion for x, y, z values (sampling rate is 32Hz).
-        # Remove data in the first and last 3 seconds.
-        timestamps = np.arange(accel[0, 0] + 3000.0, accel[-1, 0] - 3000.0, 1000.0 / 32)
 
-        # Concatenate the preprocessed data with the appropriate list based on the sensor type and activity
+
         if identifier == 'barometer':
             if activity == 'cycle':
-                bar_cycle.append(data)
+                bar_cycle[(file_name)]=(data)
             elif activity == 'crash':
-                bar_crash.append(data)
+                bar_crash[(file_name)]=(data)
         elif identifier == 'gyroscope':
             if activity == 'cycle':
-                gyro_cycle.append(data)
+                gyro_cycle[(file_name)]=(data)
             elif activity == 'crash':
-                gyro_crash.append(data)
+                gyro_crash[(file_name)]=(data)
         elif identifier == 'accelerometer':
             if activity == 'cycle':
-                accel_cycle.append(data)
+                accel_cycle[(file_name)]=(data)
             elif activity == 'crash':
-                accel_crash.append(data)
+                accel_crash[(file_name)]=(data)
+
+
+
+
+for item in accel_cycle:
+    with open('cycle-crash-dataset/combined/'+item) as file:
+        for line in file:
+
+            print(line)
