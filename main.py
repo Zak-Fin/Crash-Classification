@@ -2,7 +2,7 @@ import os
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
-
+import re
 raw_data_features = None
 raw_data_labels = None
 interpolated_timestamps = None
@@ -31,7 +31,7 @@ for file_name in file_names:
         accel = data.drop_duplicates(data.columns[0], keep='first').values
 
 
-        if identifier == 'barometer':
+        if identifier == 'pressure':
             if activity == 'cycle':
                 bar_cycle[(file_name)]=(data)
             elif activity == 'crash':
@@ -47,11 +47,68 @@ for file_name in file_names:
             elif activity == 'crash':
                 accel_crash[(file_name)]=(data)
 
+def get_accel_gyro(data):
+
+    accel_data = []
+    for item in data:
+        with open('cycle-crash-dataset/combined/'+item) as file:
+            for line in file:
+                pattern = r'X(-?\d+\.\d+)Y(-?\d+\.\d+)Z(-?\d+\.\d+)'
+                string = line
+                match = re.search(pattern, string)
+                if match:
+                    x = float(match.group(1))
+                    y = float(match.group(2))
+                    z = float(match.group(3))
+                    accel_data.append([x, y, z])
+    accel_array = np.array(accel_data)
+    return accel_array
+
+def get_bar(data):
+    pattern = r'P(-?\d+\.\d+)'
+    pressure_list =[]
+    for item in data:
+        with open('cycle-crash-dataset/combined/'+item) as file:
+            for line in file:
+                match = re.search(pattern, line)
+                if match:
+                    pressure_list.append(float(match.group(1)))
+    return(np.array(pressure_list))
 
 
 
-for item in accel_cycle:
-    with open('cycle-crash-dataset/combined/'+item) as file:
-        for line in file:
+def get_features(accel,bar,gyro):
 
-            print(line)
+    accel_mean = np.mean(accel, axis=0)
+    accel_std = np.std(accel, axis=0)
+    accel_max = np.max(np.sum(np.square(accel), axis=1))
+    print(accel_mean)
+    bar_mean = np.mean(bar, axis=0)
+    bar_std = np.std(bar, axis=0)
+    # bar_max = np.max(np.sum(np.square(bar), axis=1))
+
+    gyro_mean = np.mean(gyro, axis=0)
+    gyro_std = np.std(gyro, axis=0)
+    gyro_max = np.max(np.sum(np.square(gyro), axis=1))
+
+    # Return the calculated features as a dictionary
+    features = {'accel_mean': accel_mean,
+                'accel_std': accel_std,
+                'accel_max': accel_max,
+                'bar_mean': bar_mean,
+                'bar_std': bar_std,
+                'gyro_mean': gyro_mean,
+                'gyro_std': gyro_std,
+                'gyro_max': gyro_max,}
+
+    return features
+
+def main():
+    a = get_accel_gyro(accel_cycle)
+    b = get_accel_gyro(gyro_cycle)
+    c = get_bar(bar_cycle)
+
+
+    # thing = get_features(a,c,b)
+
+main()
