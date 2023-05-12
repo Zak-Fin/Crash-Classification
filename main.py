@@ -3,6 +3,9 @@ import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
 import re
+import seaborn as sns
+
+from sklearn.ensemble import RandomForestClassifier
 raw_data_features = None
 raw_data_labels = None
 interpolated_timestamps = None
@@ -109,6 +112,32 @@ def main():
     c = get_bar(bar_cycle)
 
 
-    # thing = get_features(a,c,b)
+    features = get_features(a,c,b)
+    print(features)
 
+
+    # Extract features from the dictionary
+    accel_mean = features['accel_mean']
+    accel_std = features['accel_std']
+    accel_max = features['accel_max']
+    bar_mean = features['bar_mean']
+    bar_std = features['bar_std']
+    gyro_mean = features['gyro_mean']
+    gyro_std = features['gyro_std']
+    gyro_max = features['gyro_max']
+
+    # Create a feature vector by concatenating the individual features
+    feature_vector = np.array([accel_mean, accel_std, accel_max, bar_mean, bar_std, gyro_mean, gyro_std, gyro_max])
+
+    # X = [feature_vector]
+
+    # y = []
+
+    # clf = RandomForestClassifier(n_estimators=100)
+    # clf.fit(X, y)
+
+    # # Use the classifier to predict the label for the new sample
+    # label = clf.predict([new_feature_vector])[0]
+
+    # sns.heatmap(feature_vector)
 main()
