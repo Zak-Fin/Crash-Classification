@@ -52,17 +52,18 @@ def extract_features_acc(file_name):
 
         return features
 
-def get_full_info(acc):
+def get_features(acc):
     data = []
     x_data = []
     y_data = []
     z_data = []
 
+    sample = acc.split(',')
 
-    for line in acc:
+    for sensorValue in sample:
+        print(sensorValue)
         pattern = r'X(-?\d+\.\d+)Y(-?\d+\.\d+)Z(-?\d+\.\d+)'
-        string = line
-        match = re.search(pattern, string)
+        match = re.search(pattern, sensorValue)
         if match:
             x = float(match.group(1))
             y = float(match.group(2))
@@ -70,7 +71,7 @@ def get_full_info(acc):
             x_data.append(x)
             y_data.append(y)
             z_data.append(z)
-            # print(x,y,z)
+            print(x,y,z)
 
     data = [x_data, y_data, z_data]
 
@@ -91,35 +92,21 @@ def get_full_info(acc):
 
 @app.route('/')
 def index():
+    print("beans")
     return "Hello world"
 
 @app.route('/predict',methods=['POST'])
 def predict():
-    coordinates_string = request.data.decode('utf-8')
-    print(coordinates_string)
-    file_names = os.listdir('cycle-crash-dataset/combined')
+    data = request.json.get('data', [])
+    # coordinates_string = request.data.decode('utf-8')
+    # print(data)
     features = []
-    # x = ast.literal_eval(request.data)
-    # print(x)
-    for file_name in file_names:
-        if 'accelerometer' in file_name:
-            features.append(extract_features_acc(file_name))
-
-    thing = get_full_info(coordinates_string)
-
+    features.append(get_features(data))
     df = pd.DataFrame(features)
-
     X = df.drop('label', axis=1)
     y = df['label']
 
-    print(np.size(df))
-
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=41)
-
-    result = model.predict(X_test)
-    # evaluate the performance of the model
-    accuracy = accuracy_score(y_test, result)
-    print("Accuracy:", accuracy)
+    result = model.predict(X)
 
     return jsonify({'result':str(result)})
 

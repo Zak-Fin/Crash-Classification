@@ -59,8 +59,8 @@ def serialise_classifier(clf):
              pickle.dump(clf, f)
    
 if __name__ == "__main__":
-    #  file_name = 'accelerometer_data_cycle_20181114_121451.txt'
-    #  print(extract_features_acc(file_name))
+    #  file_nam = 'accelerometer_data_cycle_20181114_121451.txt'
+    #  print(extract_features_acc(file_nam))
 
      file_names = os.listdir('cycle-crash-dataset/combined')
      features = []
