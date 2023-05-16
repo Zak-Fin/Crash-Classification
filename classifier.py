@@ -12,7 +12,7 @@ import seaborn as sns
 import pickle
 
 from sklearn.model_selection import train_test_split
-dir = 'cycle-crash-dataset/combined/'
+# dir = 'cycle-crash-dataset/combined/'
 def extract_features_acc(file_name):
       data = []
       x_data = []
@@ -21,7 +21,7 @@ def extract_features_acc(file_name):
       tokens = file_name.split('_')
       identifier = (tokens[0])
       activity = tokens[2]
-      with open(dir+file_name) as file:
+      with open('dataset02/v2/'+file_name) as file:
         for line in file:
             pattern = r'X(-?\d+\.\d+)Y(-?\d+\.\d+)Z(-?\d+\.\d+)'
             string = line
@@ -55,14 +55,14 @@ def extract_features_acc(file_name):
         return features
       
 def serialise_classifier(clf):
-         with open('output/classifier.pickle', 'wb') as f:
+         with open('output/classifier_2.pickle', 'wb') as f:
              pickle.dump(clf, f)
    
 if __name__ == "__main__":
     #  file_nam = 'accelerometer_data_cycle_20181114_121451.txt'
     #  print(extract_features_acc(file_nam))
 
-     file_names = os.listdir('cycle-crash-dataset/combined')
+     file_names = os.listdir('dataset02/v2/')
      features = []
     
      for file_name in file_names:
@@ -84,9 +84,9 @@ if __name__ == "__main__":
     
      print(np.size(df))
 
-     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=41)
+     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
      
-     clf = RandomForestClassifier(n_estimators=100, random_state=41, max_depth=5)
+     clf = RandomForestClassifier(n_estimators=300, random_state=42, max_depth=8)
      clf.fit(X_train, y_train)
 
      y_pred = clf.predict(X_test)
@@ -100,7 +100,7 @@ if __name__ == "__main__":
      cm = confusion_matrix(y_test, y_pred)
 
      # Plot the confusion matrix as a heatmap
-     sns.heatmap(cm, annot=True, cmap='Blues', fmt='g', xticklabels=['cycle', 'crash'], yticklabels=['cycle', 'crash'])
+     sns.heatmap(cm, annot=True, cmap='Blues', fmt='g', xticklabels=['crash', 'cycle'], yticklabels=['crash', 'cycle'])
 
      plt.xlabel('Predicted')
      plt.ylabel('True')

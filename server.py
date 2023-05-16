@@ -58,7 +58,7 @@ html = f'''<!DOCTYPE html>
 </html>'''
 
 # Get the serialised classifier file (random-forest)
-clf_path = "/home/finmead/mysite/classifier.pickle"
+clf_path = "/home/finmead/mysite/classifier_2.pickle"
 model = pickle.load(open(clf_path,'rb'))
 
 # Extract the features from the sampled acceleromater data
