@@ -68,7 +68,7 @@ if __name__ == "__main__":
      for file_name in file_names:
          if 'accelerometer' in file_name:
              features.append(extract_features_acc(file_name))
-            #  print(features)
+             print(features)
         #  if 'gyroscope' in file_name:
         #      features.append(extract_features_acc(file_name))
     #  print(features)
